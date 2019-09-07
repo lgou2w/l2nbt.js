@@ -1,0 +1,31 @@
+{
+    "name": "l2nbt",
+    "version": "0.0.1",
+    "description": "A lgou2w Minecraft NBT library for Javascript",
+    "module": "dist/l2nbt.module.js",
+    "main": "dist/l2nbt.js",
+    "scripts": {
+        "build": "rollup -c",
+        "clean": "node scripts/clean",
+        "test": "node scripts/test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lgou2w/l2nbt.js.git"
+    },
+    "author": "lgou2w <lgou2w@hotmail.com>",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/lgou2w/l2nbt.js/issues"
+    },
+    "homepage": "https://github.com/lgou2w/l2nbt.js#readme",
+    "devDependencies": {
+        "rollup": "^1.20.3",
+        "rollup-plugin-license": "^0.12.1",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-typescript2": "^0.24.0",
+        "rollup-plugin-uglify": "^6.0.3",
+        "typescript": "^3.6.2"
+    },
+    "dependencies": {}
+}
