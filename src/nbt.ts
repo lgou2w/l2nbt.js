@@ -17,7 +17,7 @@ export function tagString(value: string = ''): NBT { return tag(value, 8) }
 export function tagList(value: NBT[] = []): NBT {
     let elementTypeId = 0;
     for (let item of value) {
-        if (typeof item !== 'object' || !item.value || !item.typeId)
+        if (typeof item !== 'object' || !item.typeId || item.value === undefined)
             throw new Error(`Illegal nbt: ${item}`);
         if (elementTypeId === 0)
             elementTypeId = item.typeId;
@@ -29,7 +29,7 @@ export function tagList(value: NBT[] = []): NBT {
 export function tagCompound(value: { [key: string]: NBT } = {}): NBT {
     for (let k in value) {
         let v = value[k];
-        if (typeof v !== 'object' || !v.value || !v.typeId)
+        if (typeof v !== 'object' || !v.typeId || v.value === undefined)
             throw new Error(`Illegal nbt: key = ${k}, value = ${v}`)
     }
     return tag(value, 10)

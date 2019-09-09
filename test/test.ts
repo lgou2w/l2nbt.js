@@ -51,6 +51,19 @@ describe("NBT tag standard create", () => {
         // @ts-ignore
         expect(() => tagCompound({ foo: 1 })).to.throw(Error);
     });
+    it('should list and compound default value test', async () => {
+        expect(tagList([
+            tagByte(),
+            tagByte()
+        ])).to.have.property(VALUE)
+            .to.lengthOf(2);
+        expect(tagCompound({
+            foo: tagByte(),
+            bar: tagString()
+        })).to.have.property(VALUE)
+            .to.have.property('bar')
+            .to.have.property(VALUE, '') // empty string
+    });
 });
 
 /**
