@@ -6,14 +6,14 @@ const CAPACITY_DEFAULT = 32; // Default: 32 Bytes
 export class NBTWriter {
 
     private readonly littleEndian?: boolean;
-    private view: Uint8Array;
+    private view: Int8Array;
     private data: DataView;
     private buffer: ArrayBuffer;
     private pos: number = 0;
 
     constructor(littleEndian?: boolean) {
         this.buffer = new ArrayBuffer(CAPACITY_DEFAULT);
-        this.view = new Uint8Array(this.buffer);
+        this.view = new Int8Array(this.buffer);
         this.data = new DataView(this.buffer);
         this.littleEndian = littleEndian;
     }
@@ -27,7 +27,7 @@ export class NBTWriter {
             let oldView = this.view;
             let oldData = new Array<number>();
             let newBuffer = new ArrayBuffer(newCapacity);
-            let newView = new Uint8Array(newBuffer);
+            let newView = new Int8Array(newBuffer);
             for (let i = 0; i < oldCapacity; i++)
                 oldData.push(oldView[i]);
             newView.set(oldData);
@@ -37,7 +37,7 @@ export class NBTWriter {
         }
     }
 
-    writtenView(): Uint8Array { return this.view }
+    writtenView(): Int8Array { return this.view }
     writtenLength(): number { return this.pos }
 
     writeByte(value: number) {
@@ -185,15 +185,25 @@ const writeCompound = (writer: NBTWriter, value: NBT) => {
 };
 
 export function encode(nbt: NBT, littleEndian?: boolean): string {
-    let writer = new NBTWriter(littleEndian);
-    writeMetadata(writer, { typeId: nbt.typeId, name: '' }); // ROOT no name
-    writeValue(writer, nbt);
-    let view = writer.writtenView();
+    let binaryNBT = write(nbt, littleEndian);
     let array = new Array<string>();
-    for (let i = 0; i < writer.writtenLength(); i++) {
-        let c = String.fromCharCode(view[i]);
+    for (let i = 0; i < binaryNBT.byteLength; i++) {
+        let c = String.fromCharCode(binaryNBT[i]);
         array.push(c);
     }
     let value = array.join('');
     return btoa(value);
+}
+
+export function write(nbt: NBT, littleEndian?: boolean): Int8Array {
+    let writer = new NBTWriter(littleEndian);
+    writeMetadata(writer, { typeId: nbt.typeId, name: '' }); // ROOT no name
+    writeValue(writer, nbt);
+    let view = writer.writtenView();
+    let copy = new Int8Array(writer.writtenLength());
+    let array = new Array<number>(copy.byteLength);
+    for (let i = 0; i < copy.byteLength; i++)
+        array[i] = view[i];
+    copy.set(array);
+    return copy;
 }

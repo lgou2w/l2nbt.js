@@ -199,7 +199,13 @@ export function decode(base64EncodedNBT: string, littleEndian?: boolean): NBT {
     let array = new Int8Array(new ArrayBuffer(decode.length));
     for (let i = 0; i < array.length; i++)
         array[i] = decode.charCodeAt(i);
-    let reader = new NBTReader(new DataView(array.buffer), littleEndian);
+    return read(array, littleEndian);
+}
+
+export function read(binaryNBT: ArrayBuffer | Int8Array, littleEndian?: boolean): NBT {
+    if (binaryNBT instanceof Int8Array)
+        binaryNBT = binaryNBT.buffer;
+    let reader = new NBTReader(new DataView(binaryNBT), littleEndian);
     let rootMetadata = readMetadata(reader);
     if (rootMetadata === null)
         throw new Error('Invalid root nbt metadata.');

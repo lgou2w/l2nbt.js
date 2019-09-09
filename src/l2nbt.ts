@@ -18,12 +18,14 @@ export {
 
 export {
     NBTReader,
-    decode
+    decode,
+    read,
 } from './nbt-reader'
 
 export {
     NBTWriter,
-    encode
+    encode,
+    write
 } from './nbt-writer'
 
 export {
