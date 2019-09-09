@@ -1,6 +1,6 @@
 {
     "name": "l2nbt",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A lgou2w Minecraft NBT library for Javascript",
     "module": "dist/l2nbt.module.js",
     "main": "dist/l2nbt.js",
@@ -20,7 +20,16 @@
     "bugs": {
         "url": "https://github.com/lgou2w/l2nbt.js/issues"
     },
-    "homepage": "https://github.com/lgou2w/l2nbt.js#readme",
+    "homepage": "https://github.com/lgou2w/l2nbt.js",
+    "keywords": [
+        "minecraft",
+        "minecraft-nbt",
+        "nbt",
+        "nbt-writer",
+        "nbt-reader",
+        "named-binary-tag",
+        "nbt-base64"
+    ],
     "files": [
         "dist"
     ],
