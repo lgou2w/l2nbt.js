@@ -1,6 +1,7 @@
 export {
     NBT,
     NBTMetadata,
+    isNBT,
     tag,
     tagByte,
     tagShort,
@@ -13,13 +14,14 @@ export {
     tagList,
     tagCompound,
     tagIntArray,
-    tagLongArray
+    tagLongArray,
+    resolve
 } from './nbt'
 
 export {
     NBTReader,
     decode,
-    read,
+    read
 } from './nbt-reader'
 
 export {

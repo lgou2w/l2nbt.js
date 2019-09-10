@@ -2,18 +2,19 @@ import { atob } from './base64'
 import {
     NBT,
     NBTMetadata,
+    resolve,
     tagByte,
-    tagShort,
-    tagInt,
-    tagLong,
-    tagFloat,
-    tagDouble,
     tagByteArray,
-    tagString,
-    tagList,
     tagCompound,
+    tagDouble,
+    tagFloat,
+    tagInt,
     tagIntArray,
-    tagLongArray
+    tagList,
+    tagLong,
+    tagLongArray,
+    tagShort,
+    tagString
 } from './nbt'
 
 export class NBTReader {
@@ -209,5 +210,6 @@ export function read(binaryNBT: ArrayBuffer | Int8Array, littleEndian?: boolean)
     let rootMetadata = readMetadata(reader);
     if (rootMetadata === null)
         throw new Error('Invalid root nbt metadata.');
-    return readValue(reader, rootMetadata.typeId);
+    let nbt = readValue(reader, rootMetadata.typeId);
+    return resolve(nbt);
 }

@@ -124,30 +124,30 @@ const writeMetadata = (writer: NBTWriter, metdata: NBTMetadata) => {
 };
 
 const writeValue = (writer: NBTWriter, nbt: NBT) => {
-    let typeId = nbt.typeId;
+    let typeId = nbt.__typeId__;
     switch (typeId) {
         case 1:
-            writer.writeByte(nbt.value); break;
+            writer.writeByte(nbt.__value__); break;
         case 2:
-            writer.writeShort(nbt.value); break;
+            writer.writeShort(nbt.__value__); break;
         case 3:
-            writer.writeInt(nbt.value); break;
+            writer.writeInt(nbt.__value__); break;
         case 4:
-            writer.writeLong(nbt.value); break;
+            writer.writeLong(nbt.__value__); break;
         case 5:
-            writer.writeFloat(nbt.value); break;
+            writer.writeFloat(nbt.__value__); break;
         case 6:
-            writer.writeDouble(nbt.value); break;
+            writer.writeDouble(nbt.__value__); break;
         case 7:
         case 11:
         case 12:
-            writeArray(writer, nbt.value, typeId); break;
+            writeArray(writer, nbt.__value__, typeId); break;
         case 8:
-            writer.writeString(nbt.value); break;
+            writer.writeString(nbt.__value__); break;
         case 9:
-            writeList(writer, nbt.value); break;
+            writeList(writer, nbt); break;
         case 10:
-            writeCompound(writer, nbt.value); break;
+            writeCompound(writer, nbt.__value__); break;
         default:
             throw new Error(`Unsupported nbt type: ${typeId}`)
     }
@@ -156,7 +156,7 @@ const writeValue = (writer: NBTWriter, nbt: NBT) => {
 const writeArray = (writer: NBTWriter, value: NBT[], id: number) => {
     writer.writeInt(value.length);
     for (let i = 0; i < value.length; i++) {
-        let v = value[i].value;
+        let v = value[i].__value__;
         switch (id) {
             case 7:
                 writer.writeByte(v); break;
@@ -168,17 +168,20 @@ const writeArray = (writer: NBTWriter, value: NBT[], id: number) => {
     }
 };
 
-const writeList = (writer: NBTWriter, value: NBT[]) => {
-    writer.writeByte(value.length > 0 ? value[0].typeId : 0);
-    writer.writeInt(value.length);
-    for (let v of value)
-        writeValue(writer, v)
+const writeList = (writer: NBTWriter, tagList: NBT) => {
+    if (!tagList.__elementTypeId__)
+        throw new Error(`Illegal nbt list: ${tagList}`);
+    let pures = tagList.__value__;
+    writer.writeByte(tagList.__elementTypeId__);
+    writer.writeInt(pures.length);
+    for (let v of pures)
+        writeValue(writer, { __typeId__: tagList.__elementTypeId__, __value__: v, __nbt__: true })
 };
 
 const writeCompound = (writer: NBTWriter, value: NBT) => {
     for (let k in value) {
         let v = value[k];
-        writeMetadata(writer, { typeId: v.typeId, name: k });
+        writeMetadata(writer, { typeId: v.__typeId__, name: k });
         writeValue(writer, v);
     }
     writer.writeByte(0); // TAG_END
@@ -197,7 +200,7 @@ export function encode(nbt: NBT, littleEndian?: boolean): string {
 
 export function write(nbt: NBT, littleEndian?: boolean): Int8Array {
     let writer = new NBTWriter(littleEndian);
-    writeMetadata(writer, { typeId: nbt.typeId, name: '' }); // ROOT no name
+    writeMetadata(writer, { typeId: nbt.__typeId__, name: '' }); // ROOT no name
     writeValue(writer, nbt);
     let view = writer.writtenView();
     let copy = new Int8Array(writer.writtenLength());

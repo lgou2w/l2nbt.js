@@ -13,11 +13,12 @@ import {
     tagList,
     tagCompound,
     tagIntArray,
-    tagLongArray
+    tagLongArray,
+    resolve
 } from '../src/nbt';
 
-const TYPE_ID = 'typeId';
-const VALUE = 'value';
+const TYPE_ID = '__typeId__';
+const VALUE = '__value__';
 
 describe("NBT tag standard create", () => {
     it('should test', async () => {
@@ -66,6 +67,30 @@ describe("NBT tag standard create", () => {
     });
 });
 
+describe('NBT tag compound create and resolve', () => {
+    it('should equivalent', async () => {
+        let nbt = tagCompound({
+            display: tagCompound({
+                Name: tagString('Diamond'),
+                Lore: tagList([ tagString('1'), tagString('2') ])
+            })
+        });
+        resolve(nbt);
+        expect(nbt.display.Name).to.equal('Diamond');
+        expect(nbt.display.Lore).to.lengthOf(2);
+        expect(nbt.display.Lore[0]).to.equal('1');
+        expect(nbt.display.Name).to.equal(nbt.__value__.display.__value__.Name.__value__);
+        nbt.display.Name = 'Apple';
+        nbt.display.Lore.push('3');
+        expect(nbt.__value__.display.__value__.Name.__value__).to.equal('Apple');
+        expect(nbt.__value__.display.__value__.Lore.__value__).to.lengthOf(3);
+        expect(nbt.__value__.display.__value__.Lore.__value__[2]).to.equal('3');
+        nbt.display = {};
+        expect(nbt.__value__.display.__value__).to.be.empty;
+        expect(() => nbt.display = 1).to.throw(Error); // Because the prototype of display is TAG_COMPOUND
+    });
+});
+
 /**
  * Should bytes
  * Length = 11
@@ -87,15 +112,15 @@ let nbtBase64 = 'CgAAAQADZm9vAQA=';
 describe('NBT tag read and decode', () => {
     it('should read', async () => {
         let readNBT = read(nbtBinary);
-        expect(readNBT.typeId).to.equal(10); // TAG_COMPOUND
-        expect(readNBT.value)
+        expect(readNBT[TYPE_ID]).to.equal(10); // TAG_COMPOUND
+        expect(readNBT[VALUE])
             .to.have.property('foo') // Entry foo
             .to.have.property(VALUE, 1) // Entry foo value = 1
     });
     it('should decode', async () => {
         let decodeNBT = decode(nbtBase64);
-        expect(decodeNBT.typeId).to.equal(10); // TAG_COMPOUND
-        expect(decodeNBT.value)
+        expect(decodeNBT[TYPE_ID]).to.equal(10); // TAG_COMPOUND
+        expect(decodeNBT[VALUE])
             .to.have.property('foo') // Entry foo
             .to.have.property(VALUE, 1) // Entry foo value = 1
     });
