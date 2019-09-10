@@ -1,6 +1,6 @@
 {
     "name": "l2nbt",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A lgou2w Minecraft NBT library for Javascript",
     "module": "dist/l2nbt.module.js",
     "main": "dist/l2nbt.js",
