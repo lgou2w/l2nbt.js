@@ -19,6 +19,7 @@ import {
 
 const TYPE_ID = '__typeId__';
 const VALUE = '__value__';
+const ELEMENT = '__elementTypeId__';
 
 describe("NBT tag standard create", () => {
     it('should test', async () => {
@@ -88,6 +89,26 @@ describe('NBT tag compound create and resolve', () => {
         nbt.display = {};
         expect(nbt.__value__.display.__value__).to.be.empty;
         expect(() => nbt.display = 1).to.throw(Error); // Because the prototype of display is TAG_COMPOUND
+    });
+    it('should list tag entry compound is wrapper', async () => {
+        let nbt = tagCompound({
+            compounds: tagList([
+                tagCompound({ foo: tagByte(0) }),
+                tagCompound({ bar: tagByte(1) })
+            ]),
+            bytes: tagList([ tagByte(0), tagByte(1) ])
+        });
+        expect(nbt.__value__.compounds.__value__[0].__value__)
+            .to.have.property('foo')
+            .to.have.property(VALUE, 0);
+        expect(nbt.__value__.bytes).to.have.property(ELEMENT, 1); // 1 = TAG_BYTE
+
+        resolve(nbt);
+        expect(nbt.bytes).to.lengthOf(2); // two elements
+        expect(nbt.bytes[0]).to.equal(0);
+        expect(nbt.bytes[1]).to.equal(1);
+        expect(nbt.compounds[0].foo).to.equal(0);
+        expect(nbt.compounds[1].bar).to.equal(1);
     });
 });
 

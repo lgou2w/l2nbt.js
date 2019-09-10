@@ -169,13 +169,20 @@ const writeArray = (writer: NBTWriter, value: NBT[], id: number) => {
 };
 
 const writeList = (writer: NBTWriter, tagList: NBT) => {
-    if (!tagList.__elementTypeId__)
-        throw new Error(`Illegal nbt list: ${tagList}`);
-    let pures = tagList.__value__;
-    writer.writeByte(tagList.__elementTypeId__);
-    writer.writeInt(pures.length);
-    for (let v of pures)
-        writeValue(writer, { __typeId__: tagList.__elementTypeId__, __value__: v, __nbt__: true })
+    let elementTypeId = tagList.__elementTypeId__;
+    let values = tagList.__value__;
+    if (elementTypeId === undefined) { // Only TAG_COMPOUND elementType
+        writer.writeByte(values.length > 0 ? values[0].__typeId__ : 0);
+        writer.writeInt(values.length);
+        for (let v of values)
+            writeValue(writer, v)
+    } else {
+        // Pure list entry
+        writer.writeByte(elementTypeId);
+        writer.writeInt(values.length);
+        for (let v of values)
+            writeValue(writer, { __typeId__: elementTypeId, __value__: v, __nbt__: true })
+    }
 };
 
 const writeCompound = (writer: NBTWriter, value: NBT) => {

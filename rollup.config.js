@@ -44,11 +44,11 @@ const base = {
 export default [
     base,
     Object.assign({}, base, {
-        output: Object.assign({}, base.output[0], {file: "dist/l2nbt.min.js"}),
+        output: Object.assign({}, base.output[0], { file: "dist/l2nbt.min.js" }),
         plugins: (() => {
             const plugin = base.plugins.slice();
             plugin.splice(1, 0, uglify());
             return plugin;
         })()
-    })
+    }),
 ];

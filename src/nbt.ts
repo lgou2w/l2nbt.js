@@ -32,7 +32,6 @@ export function tagByteArray(value: number[] = []): NBT { return tag(value, 7) }
 export function tagString(value: string = ''): NBT { return tag(value, 8) }
 export function tagList(value: NBT[] = []): NBT {
     let elementTypeId = 0;
-    let pures = new Array<any>();
     for (let item of value) {
         if (typeof item !== 'object' || !item.__typeId__ || item.__value__ === undefined)
             throw new Error(`Illegal nbt: ${item}`);
@@ -40,11 +39,18 @@ export function tagList(value: NBT[] = []): NBT {
             elementTypeId = item.__typeId__;
         else if (item.__typeId__ !== elementTypeId)
             throw new Error(`Illegal element '${item}' type: ${item.__typeId__}. (Expected: ${elementTypeId})`);
-        pures.push(item.__value__);
     }
-    let nbt = tag(pures, 9);
-    nbt.__elementTypeId__ = elementTypeId;
-    return nbt;
+    if (elementTypeId === 10)
+        return tag(value, 9);
+    else {
+        // Pure list entry
+        let pures = new Array<any>();
+        for (let item of value)
+            pures.push(item.__value__);
+        let nbt = tag(pures, 9);
+        nbt.__elementTypeId__ = elementTypeId;
+        return nbt;
+    }
 }
 export function tagCompound(value: { [key: string]: NBT } = {}): NBT {
     for (let k in value) {
@@ -68,7 +74,11 @@ export function tagLongArray(value: number[] | string[] | bigint[] = []): NBT {
 export function resolve(nbt: NBT): NBT {
     if (!Object.defineProperty)
         throw new Error("The runtime environment is not support Object.defineProperty feature.");
-    if (nbt.__typeId__ === 10) {
+    if (nbt.__typeId__ === 9) {
+        for (let item of nbt.__value__)
+            if (item.__typeId__ === 9 || item.__typeId__ === 10)
+                resolve(item);
+    } else if (nbt.__typeId__ === 10) {
         for (let k in nbt.__value__) {
             let v : NBT = nbt.__value__[k];
             Object.defineProperty(nbt, k, {
@@ -129,7 +139,7 @@ export function resolve(nbt: NBT): NBT {
                     }
                 },
             });
-            if (nbt.__typeId__ === 10)
+            if (v.__typeId__ === 9 || v.__typeId__ === 10)
                 resolve(v);
         }
     }
