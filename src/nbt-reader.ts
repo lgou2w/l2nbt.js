@@ -203,8 +203,8 @@ export function decode(base64EncodedNBT: string, littleEndian?: boolean): NBT {
     return read(array, littleEndian);
 }
 
-export function read(binaryNBT: ArrayBuffer | Int8Array, littleEndian?: boolean): NBT {
-    if (binaryNBT instanceof Int8Array)
+export function read(binaryNBT: ArrayBuffer | Int8Array | Uint8Array, littleEndian?: boolean): NBT {
+    if (binaryNBT instanceof Int8Array || binaryNBT instanceof Uint8Array)
         binaryNBT = binaryNBT.buffer;
     let reader = new NBTReader(new DataView(binaryNBT), littleEndian);
     let rootMetadata = readMetadata(reader);

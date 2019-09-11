@@ -138,6 +138,10 @@ describe('NBT tag read and decode', () => {
             .to.have.property('foo') // Entry foo
             .to.have.property(VALUE, 1) // Entry foo value = 1
     });
+    it('should read Uint8Array', async () => {
+        let readNBT = read(new Uint8Array([ 10, 0, 0, 1, 0, 3, 102, 111, 111, 1, 0 ]));
+        expect(readNBT.foo).to.equal(1);
+    });
     it('should decode', async () => {
         let decodeNBT = decode(nbtBase64);
         expect(decodeNBT[TYPE_ID]).to.equal(10); // TAG_COMPOUND
