@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://unpkg.com/vuetify@1.5.18/dist/vuetify.min.css" rel="stylesheet">
+    <title>NBT Viewer for Browser | l2nbt.js</title>
+</head>
+<body>
+<div id="app">
+    <v-app light>
+        <v-toolbar app fixed dark>
+            <v-toolbar-title>NBT Viewer</v-toolbar-title>
+        </v-toolbar>
+        <v-content>
+            <v-container>
+                <input type="file" ref="fileInput" />
+                <v-treeview
+                        v-if="nbt"
+                        :items="nbtTree"
+                        class="elevation-2 py-3"
+                        item-key="name"
+                >
+                    <template #prepend="{ item, open }">
+                        <v-icon v-if="item.typeId === 9">list</v-icon>
+                        <v-icon v-else-if="item.typeId === 10">{{ open ? 'folder_open' : 'folder' }}</v-icon>
+                        <i v-else-if="item.typeId === 7 || item.typeId === 11 || item.typeId === 12">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M15,4V6H18V18H15V20H20V4M4,4V20H9V18H6V6H9V4H4Z" />
+                            </svg>
+                        </i>
+                        <i v-else>
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z"/>
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                                <text
+                                        transform="matrix(1 0 0 1 7.332 19.4375)"
+                                        style="fill:#000000;font-size:12px;font-weight:bold;font-style:normal;font-family:'Roboto',sans-serif;"
+                                >{{ computeTagType(item.typeId) }}</text>
+                            </svg>
+                        </i>
+                    </template>
+                </v-treeview>
+                <p v-else>Empty NBT data...</p>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+<script src="https://unpkg.com/vuetify@1.5.18/dist/vuetify.min.js"></script>
+<script src="https://unpkg.com/pako@1.0.10/dist/pako.min.js"></script>
+<script src="https://unpkg.com/l2nbt@0.0.4/dist/l2nbt.min.js"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            nbtBuffer: null,
+            nbt: l2nbt.tagCompound({
+                id: l2nbt.tagString('minecraft:diamond_sword'),
+                Count: l2nbt.tagByte(1),
+                tag: l2nbt.tagCompound({
+                    display: l2nbt.tagCompound({
+                        Name: l2nbt.tagString('Diamond Sword'),
+                        Lore: l2nbt.tagList([
+                            l2nbt.tagString('Lore1'),
+                            l2nbt.tagString('Lore2')
+                        ]),
+                    }),
+                }),
+            })
+        },
+        computed: {
+            nbtTree () {
+                return this.generateTree(this.nbt);
+            }
+        },
+        mounted () {
+            this.$refs.fileInput.onchange = this.onChange;
+        },
+        methods: {
+            generateTree (nbt) {
+                let tree = [];
+                for (let k in nbt.__value__) {
+                    let v = nbt.__value__[k];
+                    if (v.__typeId__ === 9 || v.__typeId__ === 10) {
+                        tree.push({
+                            name: `${k} :`,
+                            typeId: v.__typeId__,
+                            children: this.generateTree(v)
+                        })
+                    } else if (v.__typeId__ === 7 || v.__typeId__ === 11 || v.__typeId__ === 12) {
+                        let values = [];
+                        for (let el of v.__value__)
+                            values.push({
+                                name: el,
+                                typeId: v.__typeId__ === 7 ? 1 : v.__typeId__ === 11 ? 3 : 4
+                            });
+                        tree.push({
+                            name: `${k} :`,
+                            typeId: v.__typeId__,
+                            children: values
+                        })
+                    } else {
+                        if (nbt.__elementTypeId__) {
+                            tree.push({
+                                name: typeof v === 'string' ? `"${v}"` : v,
+                                typeId: nbt.__elementTypeId__
+                            })
+                        } else {
+                            let value = v.__typeId__ === 8 ? `"${v.__value__}"` : v.__value__;
+                            tree.push({
+                                name: `${k} : ${value}`,
+                                typeId: v.__typeId__
+                            })
+                        }
+                    }
+                }
+                return tree;
+            },
+            computeTagType (typeId) {
+                switch (typeId) {
+                    case 1:
+                        return 'B';
+                    case 2:
+                        return 'S';
+                    case 3:
+                        return 'I';
+                    case 4:
+                        return 'L';
+                    case 5:
+                        return 'F';
+                    case 6:
+                        return 'D';
+                    case 8:
+                        return 'T';
+                    default:
+                        return 'U';
+                }
+            },
+            async compute (files) {
+                return new Promise(resolve => {
+                    let rawFile = files[0];
+                    if (!rawFile)
+                        return resolve({ error: '未选择任何文件.' });
+                    let file = {
+                        name: rawFile.name,
+                        size: rawFile.size,
+                        type: rawFile.type,
+                        raw: rawFile
+                    };
+                    let reader = new FileReader();
+                    reader.onload = (e) => {
+                        file.buffer = e.target.result;
+                        resolve({ file })
+                    };
+                    reader.readAsArrayBuffer(rawFile);
+                });
+            },
+            onChange (evt) {
+                this.compute(evt.target.files).then(res => {
+                    this.readNBTBuffer(res.file.buffer);
+                });
+                this.$refs.fileInput.value = null;
+            },
+            readNBTBuffer (buffer) {
+                let view = new Uint8Array(buffer);
+                if (view[0] === 0x1F && view[1] === 0x8B) // 0x1F 0x8B
+                    view = pako.inflate(view);
+                this.nbt = l2nbt.read(view);
+            }
+        }
+    });
+</script>
+</body>
+</html>
