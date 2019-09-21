@@ -31,6 +31,11 @@ export {
 } from './nbt-writer'
 
 export {
+    toMojangson,
+    parseMojangson
+} from './mojangson'
+
+export {
     atob,
     btoa
 } from './base64'

@@ -1,5 +1,5 @@
 import { btoa } from './base64'
-import { NBT, NBTMetadata } from './nbt'
+import { NBT, NBTMetadata, tag } from './nbt'
 
 const CAPACITY_DEFAULT = 32; // Default: 32 Bytes
 
@@ -181,7 +181,7 @@ const writeList = (writer: NBTWriter, tagList: NBT) => {
         writer.writeByte(elementTypeId);
         writer.writeInt(values.length);
         for (let v of values)
-            writeValue(writer, { __typeId__: elementTypeId, __value__: v, __nbt__: true })
+            writeValue(writer, tag(v, elementTypeId))
     }
 };
 

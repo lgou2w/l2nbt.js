@@ -7,11 +7,13 @@ module.exports = function (config) {
         basePath: "",
         frameworks: ["mocha"],
         files: [
-            "test/test.ts"
+            "test/test.ts",
+            "test/test-json.ts"
         ],
         exclude: [],
         preprocessors: {
-            "test/test.ts": ["webpack"]
+            "test/test.ts": ["webpack"],
+            "test/test-json.ts": ["webpack"]
         },
         webpack: {
             mode: "development",
