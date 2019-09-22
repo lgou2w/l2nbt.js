@@ -32,16 +32,13 @@ const toJsonValue = (json: Array<string>, nbt: NBT) => {
 
 const toJsonCompound = (json: Array<string>, nbt: NBT) => {
     json.push('{');
-    let length = Object.keys(nbt.__value__).length; // compatibility?
-    let i = 0;
     for (let k in nbt.__value__) {
         let v : NBT = nbt.__value__[k];
-        if (i >= 1 && i < length)
-            json.push(',');
         json.push(`\"${k}\":`); // -> "KEY":
         toJsonValue(json, v);
-        i++;
+        json.push(',');
     }
+    json.pop(); // remove last comma
     json.push('}');
 };
 
