@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { toMojangson, parseMojangson } from '../src/mojangson'
 import {
     tagByte,
     tagShort,
@@ -14,9 +13,14 @@ import {
     tagIntArray,
     tagLongArray
 } from '../src/nbt';
+import {
+    toMojangson,
+    parseMojangson,
+    parseMojangsonValue
+} from '../src/mojangson'
 
 describe('NBT to mojangson', () => {
-    it('should to mojangson', function () {
+    it('should to mojangson', async () => {
         let nbt = tagCompound({
             byte: tagByte(127),
             short: tagShort(25600),
@@ -37,5 +41,14 @@ describe('NBT to mojangson', () => {
         });
         let mojangson = toMojangson(nbt);
         console.log(mojangson); // TODO expect
+    });
+});
+
+describe('Mojangson to NBT', () => {
+    it('should to NBT', async () => {
+        let mojangson = '{"byte":127b,"short":25600s,"int":14586233,"long":2697354127323L,"float":1.256977f,"double":3.1415926535d,"string":"Hello World","list":[1b,2b],"barr":[B;0B,1B,2B,3B],"iarr":[I;0,1,2,3],"larr":[L;0L,1L,2L,3L],"tag":{"display":{"Name":\n' +
+            '"Diamond Sword"}}}';
+        let compound = parseMojangson(mojangson);
+        console.log(toMojangson(compound)); // TODO expect
     });
 });

@@ -32,7 +32,8 @@ export {
 
 export {
     toMojangson,
-    parseMojangson
+    parseMojangson,
+    parseMojangsonValue
 } from './mojangson'
 
 export {
