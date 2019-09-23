@@ -104,11 +104,12 @@ class StringReader {
     private static SYNTAX_ESCAPE = '\\';
     private static SYNTAX_DOUBLE_QUOTE = '"';
     private static SYNTAX_SINGLE_QUOTE = '\'';
+    private static WHITESPACE_PATTERN = /\s/;
 
-    private static isQuotedStringStart = (c) =>
+    private static isQuotedStringStart = (c: string) =>
         c === StringReader.SYNTAX_DOUBLE_QUOTE ||
         c === StringReader.SYNTAX_SINGLE_QUOTE;
-    private static isAllowedInUnquotedString = (c) =>
+    private static isAllowedInUnquotedString = (c: string) =>
         (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
         c === '_' || c === '-' || c === '.' || c === '+';
 
@@ -124,7 +125,7 @@ class StringReader {
     read = () => this.str[this.cursor++];
     skip = () => { this.cursor++ };
     skipWhitespace = () => {
-        while (this.canRead() && /\s/.test(this.peek())) // whitespace
+        while (this.canRead() && StringReader.WHITESPACE_PATTERN.test(this.peek())) // whitespace
             this.skip();
     };
     readUnquotedString = (): string => {
