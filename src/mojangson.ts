@@ -54,7 +54,9 @@ const toJsonCompound = (json: Array<string>, nbt: NBT) => {
         toJsonValue(json, v);
         json.push(',');
     }
-    json.pop(); // remove last comma
+    let last = json.pop();
+    if (last && last !== ',') // remove last comma
+        json.push(last);
     json.push('}');
 };
 
