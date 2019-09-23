@@ -374,11 +374,13 @@ class MojangsonParser {
 export function parseMojangson(mojangson: string): NBT {
     let reader = new StringReader(mojangson);
     let parser = new MojangsonParser(reader);
-    return parser.readSingleStruct();
+    let nbt = parser.readSingleStruct();
+    return resolve(nbt);
 }
 
 export function parseMojangsonValue(mojangson: string): NBT {
     let reader = new StringReader(mojangson);
     let parser = new MojangsonParser(reader);
-    return parser.readValue();
+    let nbt = parser.readValue();
+    return resolve(nbt);
 }
