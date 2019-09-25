@@ -1,57 +1,57 @@
 {
-    "name": "l2nbt",
-    "version": "0.0.5",
-    "description": "A lgou2w Minecraft NBT library for Javascript",
-    "module": "dist/l2nbt.module.js",
-    "main": "dist/l2nbt.js",
-    "scripts": {
-        "build": "rollup -c",
-        "clean": "node scripts/clean",
-        "test": "karma start",
-        "watch": "rollup -w -c",
-        "prepublishOnly": "npm test && npm run clean && npm run build"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/lgou2w/l2nbt.js.git"
-    },
-    "author": "lgou2w <lgou2w@hotmail.com>",
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/lgou2w/l2nbt.js/issues"
-    },
-    "homepage": "https://github.com/lgou2w/l2nbt.js",
-    "keywords": [
-        "minecraft",
-        "minecraft-nbt",
-        "named-binary-tag",
-        "nbt",
-        "nbt-writer",
-        "nbt-reader",
-        "nbt-base64",
-        "nbt-json"
-    ],
-    "files": [
-        "dist"
-    ],
-    "devDependencies": {
-        "@types/chai": "^4.2.1",
-        "@types/mocha": "^5.2.7",
-        "chai": "^4.2.0",
-        "karma": "^4.3.0",
-        "karma-chrome-launcher": "^3.1.0",
-        "karma-mocha": "^1.3.0",
-        "karma-webpack": "^4.0.2",
-        "mocha": "^6.2.0",
-        "puppeteer": "^1.19.0",
-        "rollup": "^1.20.3",
-        "rollup-plugin-license": "^0.12.1",
-        "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-typescript2": "^0.24.0",
-        "rollup-plugin-uglify": "^6.0.3",
-        "ts-loader": "^6.0.4",
-        "typescript": "^3.6.2",
-        "webpack": "^4.39.3"
-    },
-    "dependencies": {}
+  "name": "l2nbt",
+  "version": "0.0.5",
+  "description": "A lgou2w Minecraft NBT library for Javascript",
+  "module": "dist/l2nbt.module.js",
+  "main": "dist/l2nbt.js",
+  "scripts": {
+    "build": "rollup -c",
+    "clean": "node scripts/clean",
+    "test": "karma start",
+    "watch": "rollup -w -c",
+    "prepublishOnly": "npm test && npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lgou2w/l2nbt.js.git"
+  },
+  "author": "lgou2w <lgou2w@hotmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/lgou2w/l2nbt.js/issues"
+  },
+  "homepage": "https://github.com/lgou2w/l2nbt.js",
+  "keywords": [
+    "minecraft",
+    "minecraft-nbt",
+    "named-binary-tag",
+    "nbt",
+    "nbt-writer",
+    "nbt-reader",
+    "nbt-base64",
+    "nbt-json"
+  ],
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/chai": "^4.2.1",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "karma": "^4.3.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-webpack": "^4.0.2",
+    "mocha": "^6.2.0",
+    "puppeteer": "^1.19.0",
+    "rollup": "^1.20.3",
+    "rollup-plugin-license": "^0.12.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.24.0",
+    "rollup-plugin-uglify": "^6.0.3",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.6.2",
+    "webpack": "^4.39.3"
+  },
+  "dependencies": {}
 }

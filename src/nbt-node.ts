@@ -6,9 +6,9 @@ import { NBT } from './nbt'
 import { read } from './nbt-reader'
 
 export function readFile(file: string, littleEndian?: boolean): NBT {
-    let resolveFile = path.resolve(file);
-    let buffer = fs.readFileSync(resolveFile);
-    return read(new Int8Array(buffer), littleEndian);
+  let resolveFile = path.resolve(file);
+  let buffer = fs.readFileSync(resolveFile);
+  return read(new Int8Array(buffer), littleEndian);
 }
 
 // TODO: writeFile, gzip, pako etc..

@@ -1,42 +1,42 @@
 export {
-    NBT,
-    NBTMetadata,
-    isNBT,
-    tag,
-    tagByte,
-    tagShort,
-    tagInt,
-    tagLong,
-    tagFloat,
-    tagDouble,
-    tagByteArray,
-    tagString,
-    tagList,
-    tagCompound,
-    tagIntArray,
-    tagLongArray,
-    resolve
+  NBT,
+  NBTMetadata,
+  isNBT,
+  tag,
+  tagByte,
+  tagShort,
+  tagInt,
+  tagLong,
+  tagFloat,
+  tagDouble,
+  tagByteArray,
+  tagString,
+  tagList,
+  tagCompound,
+  tagIntArray,
+  tagLongArray,
+  resolve
 } from './nbt'
 
 export {
-    NBTReader,
-    decode,
-    read
+  NBTReader,
+  decode,
+  read
 } from './nbt-reader'
 
 export {
-    NBTWriter,
-    encode,
-    write
+  NBTWriter,
+  encode,
+  write
 } from './nbt-writer'
 
 export {
-    toMojangson,
-    parseMojangson,
-    parseMojangsonValue
+  toMojangson,
+  parseMojangson,
+  parseMojangsonValue
 } from './mojangson'
 
 export {
-    atob,
-    btoa
+  atob,
+  btoa
 } from './base64'
