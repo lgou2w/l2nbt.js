@@ -110,6 +110,19 @@ describe('NBT tag compound create and resolve', () => {
     expect(nbt.compounds[0].foo).to.equal(0);
     expect(nbt.compounds[1].bar).to.equal(1);
   });
+  it('should non nbt will be deleted', async () => {
+    // @ts-ignore
+    let nbt = tagCompound({
+      id: tagString('id'),
+      errornbt1: 1,
+      errornbt2: null,
+      errornbt3: undefined
+    }, true);
+    expect(nbt.__value__).to.have.property('id');
+    expect(nbt.__value__).to.not.have.property('errornbt1');
+    expect(nbt.__value__).to.not.have.property('errornbt2');
+    expect(nbt.__value__).to.not.have.property('errornbt3');
+  });
 });
 
 /**

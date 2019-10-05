@@ -8,7 +8,7 @@ export type NBT = {
 };
 
 export function isNBT(value: any): boolean {
-  return typeof value === 'object' &&
+  return value && typeof value === 'object' &&
     value.__typeId__  &&
     value.__value__ !== undefined &&
     value.__nbt__;
@@ -55,11 +55,15 @@ export function tagList(value: NBT[] = []): NBT {
     return nbt;
   }
 }
-export function tagCompound(value: { [key: string]: NBT } = {}): NBT {
+export function tagCompound(value: { [key: string]: NBT } = {}, deleteNotNBT?: boolean): NBT {
   for (let k in value) {
     let v = value[k];
-    if (!isNBT(v))
-      throw new Error(`Illegal nbt: key = ${k}, value = ${v}`)
+    if (!isNBT(v)) {
+      if (deleteNotNBT === true)
+        delete value[k];
+      else
+        throw new Error(`Illegal nbt: key = ${k}, value = ${v}`)
+    }
   }
   return tag(value, 10);
 }
