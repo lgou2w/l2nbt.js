@@ -1,0 +1,62 @@
+{
+  "name": "l2nbt.js",
+  "version": "0.1.0",
+  "description": "A lgou2w Minecraft NBT library for Javascript",
+  "main": "dist/l2nbt.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib dist",
+    "build": "npm run build:prod",
+    "build:dev": "npm run clean && tsc && cross-env NODE_ENV=development webpack",
+    "build:prod": "npm run clean && tsc && cross-env NODE_ENV=production webpack",
+    "test": "",
+    "lint": "eslint --ext .js,.ts,.tsx --ignore-path .gitignore .",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lgou2w/l2nbt.js.git"
+  },
+  "author": "lgou2w <lgou2w@hotmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/lgou2w/l2nbt.js/issues"
+  },
+  "homepage": "https://github.com/lgou2w/l2nbt.js",
+  "keywords": [
+    "minecraft",
+    "minecraft-nbt",
+    "named-binary-tag",
+    "nbt",
+    "nbt-writer",
+    "nbt-reader",
+    "nbt-base64",
+    "nbt-json"
+  ],
+  "devDependencies": {
+    "@types/node": "^13.13.5",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.0.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "rimraf": "^3.0.2",
+    "terser-webpack-plugin": "^3.0.1",
+    "ts-loader": "^7.0.3",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {}
+}
