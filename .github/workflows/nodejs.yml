@@ -1,0 +1,45 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'dependabot/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bahmutov/npm-install@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: install
+      - name: ESLint Check
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: lint
+      - name: Test Browser
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: test:browser
+      - name: Test Node
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: test:node
+      - name: Build
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: build
