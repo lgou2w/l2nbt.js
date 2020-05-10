@@ -1,5 +1,5 @@
 {
-  "name": "l2nbt.js",
+  "name": "l2nbt",
   "version": "0.1.0",
   "description": "A lgou2w Minecraft NBT library for Javascript",
   "main": "dist/l2nbt.js",
