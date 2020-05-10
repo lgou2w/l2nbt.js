@@ -1,154 +1,265 @@
-export type NBTMetadata = { readonly typeId: number, name: string };
+/// NBT Types
+
+export type NBTType =
+  0x0 | 0x1 | 0x2 | 0x3 | 0x4 | 0x5 | 0x6 |
+  0x7 | 0x8 | 0x9 | 0xA | 0xB | 0xC
+
+export const NBTTypes = {
+  TAG_END: 0x0 as NBTType,
+  TAG_BYTE: 0x1 as NBTType,
+  TAG_SHORT: 0x2 as NBTType,
+  TAG_INT: 0x3 as NBTType,
+  TAG_LONG: 0x4 as NBTType,
+  TAG_FLOAT: 0x5 as NBTType,
+  TAG_DOUBLE: 0x6 as NBTType,
+  TAG_BYTE_ARRAY: 0x7 as NBTType,
+  TAG_STRING: 0x8 as NBTType,
+  TAG_LIST: 0x9 as NBTType,
+  TAG_COMPOUND: 0xA as NBTType,
+  TAG_INT_ARRAY: 0xB as NBTType,
+  TAG_LONG_ARRAY: 0xC as NBTType
+}
+
+/// NBT
+
 export type NBT = {
-  [key: string]: any,
-  __typeId__: number,
-  __value__: any,
-  __elementTypeId__?: number,
-  __nbt__: boolean
-};
-
-export function isNBT(value: any): boolean {
-  return value && typeof value === 'object' &&
-    value.__typeId__  &&
-    value.__value__ !== undefined &&
-    value.__nbt__;
+  __value__: any
+  readonly __type__: NBTType
+  readonly __nbt__: true
 }
 
-export function tag(value: any, typeId: number): NBT {
-  return {
-    __value__: value,
-    __typeId__: typeId,
-    __nbt__: true
-  }
+export type NBTList = NBT & {
+  readonly __elementType__?: NBTType
 }
-export function tagByte(value: number = 0): NBT { return tag(value, 1) }
-export function tagShort(value: number = 0): NBT { return tag(value, 2) }
-export function tagInt(value: number = 0): NBT { return tag(value, 3) }
-export function tagLong(value: number | string | bigint = 0): NBT {
-  if (typeof value !== 'bigint')
-    value = BigInt(value);
-  return tag(value, 4)
+
+export type NBTCompound = NBT & {
+  [key: string]: NBT
 }
-export function tagFloat(value: number = 0): NBT { return tag(value, 5) }
-export function tagDouble(value: number = 0): NBT { return tag(value, 6) }
-export function tagByteArray(value: number[] = []): NBT { return tag(value, 7) }
-export function tagString(value: string = ''): NBT { return tag(value, 8) }
-export function tagList(value: NBT[] = []): NBT {
-  let elementTypeId = 0;
-  for (let item of value) {
-    if (!isNBT(item))
-      throw new Error(`Illegal nbt: ${item}`);
-    if (elementTypeId === 0)
-      elementTypeId = item.__typeId__;
-    else if (item.__typeId__ !== elementTypeId)
-      throw new Error(`Illegal element '${item}' type: ${item.__typeId__}. (Expected: ${elementTypeId})`);
-  }
-  if (elementTypeId === 10)
-    return tag(value, 9);
-  else {
-    // Pure list entry
-    let pures = new Array<any>();
-    for (let item of value)
-      pures.push(item.__value__);
-    let nbt = tag(pures, 9);
-    nbt.__elementTypeId__ = elementTypeId;
-    return nbt;
-  }
+
+export type NBTMetadata = {
+  readonly type: NBTType
+  readonly name: string
 }
-export function tagCompound(value: { [key: string]: NBT } = {}, deleteNotNBT?: boolean): NBT {
-  for (let k in value) {
-    let v = value[k];
-    if (!isNBT(v)) {
-      if (deleteNotNBT === true)
-        delete value[k];
-      else
-        throw new Error(`Illegal nbt: key = ${k}, value = ${v}`)
+
+export function isNBT (obj: any): obj is NBT {
+  return typeof obj === 'object' &&
+    obj.__type__ >= NBTTypes.TAG_END &&
+    obj.__type__ <= NBTTypes.TAG_LONG_ARRAY &&
+    typeof obj.__value__ !== 'undefined' &&
+    typeof obj.__nbt__ === 'boolean' &&
+    obj.__nbt__
+}
+
+/// NBT Tags
+
+function tag (type: NBTType, value: any): NBT {
+  return Object.defineProperties({}, {
+    __value__: {
+      value,
+      writable: true,
+      configurable: true,
+      enumerable: false
+    },
+    __type__: {
+      value: type,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    },
+    __nbt__: {
+      value: true,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    }
+  }) as NBT
+}
+
+export function tagByte (value?: number): NBT {
+  return tag(NBTTypes.TAG_BYTE, value || 0)
+}
+
+export function tagShort (value?: number): NBT {
+  return tag(NBTTypes.TAG_SHORT, value || 0)
+}
+
+export function tagInt (value?: number): NBT {
+  return tag(NBTTypes.TAG_INT, value || 0)
+}
+
+export function tagLong (value?: number | string | bigint): NBT {
+  if (typeof value !== 'bigint') {
+    value = BigInt(value || 0)
+  }
+  return tag(NBTTypes.TAG_LONG, value)
+}
+
+export function tagFloat (value?: number): NBT {
+  return tag(NBTTypes.TAG_FLOAT, value || 0)
+}
+
+export function tagDouble (value?: number): NBT {
+  return tag(NBTTypes.TAG_DOUBLE, value || 0)
+}
+
+export function tagByteArray (value?: number[]): NBT {
+  return tag(NBTTypes.TAG_BYTE_ARRAY, value || [])
+}
+
+export function tagString (value?: string): NBT {
+  return tag(NBTTypes.TAG_STRING, value || '')
+}
+
+export function tagList (value?: NBT[]): NBTList {
+  value = value || []
+  let elementType: NBTType = NBTTypes.TAG_END
+  for (const el of value) {
+    if (!isNBT(el)) {
+      throw new Error(`NBTList elements must be of type NBT: ${el}`)
+    }
+    if (elementType === NBTTypes.TAG_END) {
+      elementType = el.__type__
+    } else if (el.__type__ !== elementType) {
+      throw new Error(`Invalid element '${el}' type: ${el.__type__}. (Expected: ${elementType})`)
     }
   }
-  return tag(value, 10);
-}
-export function tagIntArray(value: number[] = []): NBT { return tag(value, 11) }
-export function tagLongArray(value: number[] | string[] | bigint[] = []): NBT {
-  let result = new Array<bigint>();
-  for (let item of value) {
-    if (typeof item !== 'bigint')
-      item = BigInt(item);
-    result.push(item);
+  if (elementType === NBTTypes.TAG_COMPOUND) {
+    const nbt = tag(NBTTypes.TAG_LIST, value)
+    return resolve(nbt)
+  } else {
+    // Defined pure list elements
+    const result: any[] = []
+    for (const el of value) {
+      result.push(el.__value__)
+    }
+    const nbt = tag(NBTTypes.TAG_LIST, result)
+    return Object.defineProperties(nbt, {
+      __elementType__: {
+        value: elementType,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      }
+    })
   }
-  return tag(result, 12)
 }
 
-export function resolve(nbt: NBT): NBT {
-  if (!Object.defineProperty)
-    throw new Error("The runtime environment is not support Object.defineProperty feature.");
-  if (nbt.__typeId__ === 9) {
-    for (let item of nbt.__value__)
-      if (item.__typeId__ === 9 || item.__typeId__ === 10)
-        resolve(item);
-  } else if (nbt.__typeId__ === 10) {
-    for (let k in nbt.__value__) {
-      let v : NBT = nbt.__value__[k];
-      Object.defineProperty(nbt, k, {
-        get(): any {
-          return v.__typeId__ === 10 ? v : v.__value__;
+export function tagCompound (
+  value?: { [key: string]: NBT },
+  deleteNotNBT?: boolean
+): NBTCompound {
+  value = value || {}
+  for (const key in value) {
+    const val = value[key]
+    if (!isNBT(val)) {
+      if (deleteNotNBT === true) {
+        delete value[key]
+      } else {
+        throw new Error(`Invalid compound entry: key = ${key}, value = ${val}`)
+      }
+    }
+  }
+  const nbt = tag(NBTTypes.TAG_COMPOUND, value)
+  return resolve(nbt) as NBTCompound
+}
+
+export function tagIntArray (value?: number[]): NBT {
+  return tag(NBTTypes.TAG_INT_ARRAY, value || [])
+}
+
+export function tagLongArray (value?: (number | string | bigint)[]): NBT {
+  const result: bigint[] = []
+  for (let el of value || []) {
+    if (typeof el !== 'bigint') {
+      el = BigInt(el || 0)
+    }
+    result.push(el)
+  }
+  return tag(NBTTypes.TAG_LONG_ARRAY, result)
+}
+
+function resolve (nbt: NBT): NBT {
+  if (nbt.__type__ === NBTTypes.TAG_LIST) {
+    for (const el of nbt.__value__) {
+      if (el.__type__ === NBTTypes.TAG_LIST ||
+        el.__type__ === NBTTypes.TAG_COMPOUND) {
+        resolve(el)
+      }
+    }
+  } else if (nbt.__type__ === NBTTypes.TAG_COMPOUND) {
+    for (const key in nbt.__value__) {
+      const val = nbt.__value__[key] as NBT
+      Object.defineProperty(nbt, key, {
+        get (): any {
+          return val.__type__ === NBTTypes.TAG_COMPOUND
+            ? val
+            : val.__value__
         },
-        set(value: any): void {
-          let valueType = typeof value;
-          switch (v.__typeId__) {
-            case 1:
-            case 2:
-            case 3:
-            case 5:
-            case 6:
-              if (valueType !== 'number')
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: number)`);
-              v.__value__ = value;
-              break;
-            case 4:
-              if (valueType === 'number' || valueType === 'string')
-                value = BigInt(value);
-              else if (valueType !== 'bigint')
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: number | string | bigint)`);
-              v.__value__ = value;
-              break;
-            case 7:
-            case 11:
-              if (!(value instanceof Array))
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: number Array)`);
-              for (let el of value)
-                if (typeof el !== 'number')
-                  throw new Error(`Illegal value element type: '${typeof el}' (Expected: number)`);
-              v.__value__ = value;
-              break;
-            case 8:
-              if (valueType !== 'string')
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: string)`);
-              v.__value__ = value;
-              break;
-            case 9:
-              if (!(value instanceof Array))
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: NBT Array)`);
-              let list = tagList(value);
-              v.__value__ = list.__value__;
-              break;
-            case 10:
-              if (valueType !== 'object')
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: NBT)`);
-              let compound = tagCompound(value);
-              v.__value__ = compound.__value__;
-              break;
-            case 12:
-              if (!(value instanceof Array))
-                throw new Error(`Illegal key '${k}' value type: '${valueType}' (Expected: number | string | bigint of Array)`);
-              let longArray = tagLongArray(value);
-              v.__value__ = longArray.__value__;
-              break;
+        set (newVal: any) {
+          const typeOf = typeof newVal
+          switch (val.__type__) {
+            case NBTTypes.TAG_BYTE:
+            case NBTTypes.TAG_SHORT:
+            case NBTTypes.TAG_INT:
+            case NBTTypes.TAG_FLOAT:
+            case NBTTypes.TAG_DOUBLE:
+              if (typeOf !== 'number') {
+                throw new Error(`Invalid key '${key}' value type: ${typeOf}. (Expected: number)`)
+              }
+              val.__value__ = newVal
+              break
+            case NBTTypes.TAG_LONG:
+              if (typeOf === 'number' || typeOf === 'string') {
+                newVal = BigInt(newVal)
+              } else if (typeOf !== 'bigint') {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: number | string | bigint)`)
+              }
+              val.__value__ = newVal
+              break
+            case NBTTypes.TAG_BYTE_ARRAY:
+            case NBTTypes.TAG_INT_ARRAY:
+              if (!(newVal instanceof Array)) {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: number Array)`)
+              }
+              for (const el of newVal) {
+                if (typeof el !== 'number') {
+                  throw new Error(`Invalid value element type: '${typeof el}' (Expected: number)`)
+                }
+              }
+              val.__value__ = newVal
+              break
+            case NBTTypes.TAG_STRING:
+              if (typeOf !== 'string') {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: string)`)
+              }
+              val.__value__ = newVal
+              break
+            case NBTTypes.TAG_LIST:
+              if (!(newVal instanceof Array)) {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: NBT Array)`)
+              }
+              val.__value__ = tagList(newVal).__value__
+              break
+            case NBTTypes.TAG_COMPOUND:
+              if (typeOf !== 'object') {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: NBT)`)
+              }
+              val.__value__ = tagCompound(newVal).__value__
+              break
+            case NBTTypes.TAG_LONG_ARRAY:
+              if (!(newVal instanceof Array)) {
+                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: (number | string | bigint) of Array)`)
+              }
+              val.__value__ = tagLongArray(newVal).__value__
+              break
           }
-        },
-      });
-      if (v.__typeId__ === 9 || v.__typeId__ === 10)
-        resolve(v);
+        }
+      })
+      if (val.__type__ === NBTTypes.TAG_LIST ||
+        val.__type__ === NBTTypes.TAG_COMPOUND) {
+        resolve(val)
+      }
     }
   }
-  return nbt;
+  return nbt
 }
