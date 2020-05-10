@@ -2,6 +2,8 @@ const webpackConfig = require('./webpack.config')
 
 process.env.CHROME_BIN = process.env.CHROME_BIN || require('puppeteer').executablePath()
 
+console.info('Chrome bin:', process.env.CHROME_BIN)
+
 module.exports = (config) => {
   config.set({
     basePath: '',
@@ -17,6 +19,11 @@ module.exports = (config) => {
     mime: {
       'text/x-typescript': ['ts']
     },
+    plugins: [
+      require('karma-chrome-launcher'),
+      require('karma-mocha'),
+      require('karma-webpack')
+    ],
     reporters: ['progress'],
     port: 9876,
     colors: true,
