@@ -21,13 +21,24 @@ module.exports = (config) => {
     reporters: ['progress'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_WARN,
+    logLevel: config.LOG_INFO,
     autoWatch: false,
+    captureTimeout: 210000,
+    browserDisconnectTolerance: 3,
+    browserDisconnectTimeout: 210000,
+    browserNoActivityTimeout: 210000,
     browsers: ['ChromeHeadlessNoSandbox'],
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
         base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
+        flags: [
+          '--headless',
+          '--no-sandbox',
+          '--disable-gpu',
+          '--disable-translate',
+          '--disable-extensions',
+          '--remote-debugging-port=9222'
+        ]
       }
     },
     singleRun: true,
