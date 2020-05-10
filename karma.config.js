@@ -2,8 +2,6 @@ const webpackConfig = require('./webpack.config')
 
 process.env.CHROME_BIN = process.env.CHROME_BIN || require('puppeteer').executablePath()
 
-console.info('Chrome bin:', process.env.CHROME_BIN)
-
 module.exports = (config) => {
   config.set({
     basePath: '',
