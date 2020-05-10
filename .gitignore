@@ -203,3 +203,4 @@ dist
 # User customs
 dist/
 lib/
+!test/

@@ -261,5 +261,5 @@ function resolve (nbt: NBT): NBT {
       }
     }
   }
-  return nbt as NBT
+  return nbt
 }
