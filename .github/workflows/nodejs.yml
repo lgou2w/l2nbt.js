@@ -23,14 +23,30 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Install Chromium
+        run: apt-get update \
+          && apt-get install -yq libgconf-2-4 \
+          && apt-get install -y wget --no-install-recommends \
+          && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+          && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+          && apt-get update \
+          && apt-get install -y chromium-browser \
+          && rm -rf /var/lib/apt/lists/*
+      - name: Define Chromium env
+        run: echo ::set-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+          && echo ::set-env CHROME_BIN=/usr/bin/chromium-browser
+
       - name: Install Dependencies
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: install
+
       - name: ESLint Check
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: lint
+
       - name: Test Browser
         uses: Borales/actions-yarn@v2.1.0
         with:
@@ -39,6 +55,7 @@ jobs:
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: test:node
+
       - name: Build
         uses: Borales/actions-yarn@v2.1.0
         with:

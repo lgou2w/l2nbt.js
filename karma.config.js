@@ -1,7 +1,6 @@
-const puppeteer = require('puppeteer').executablePath()
 const webpackConfig = require('./webpack.config')
 
-process.env.CHROME_BIN = puppeteer
+process.env.CHROME_BIN = process.env.CHROME_BIN || require('puppeteer').executablePath()
 
 module.exports = (config) => {
   config.set({
@@ -23,10 +22,10 @@ module.exports = (config) => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    captureTimeout: 210000,
+    captureTimeout: 120000,
     browserDisconnectTolerance: 3,
-    browserDisconnectTimeout: 210000,
-    browserNoActivityTimeout: 210000,
+    browserDisconnectTimeout: 120000,
+    browserNoActivityTimeout: 120000,
     browsers: ['ChromeHeadlessNoSandbox'],
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
