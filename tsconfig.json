@@ -8,15 +8,16 @@
     ],
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./lib",
-    "rootDir": ".",
+    "outDir": "lib",
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
-    "test",
     "node_modules"
+  ],
+  "include": [
+    "src/**/*"
   ]
 }

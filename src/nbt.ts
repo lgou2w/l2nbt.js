@@ -52,7 +52,7 @@ export function isNBT (obj: any): obj is NBT {
 
 /// NBT Tags
 
-function tag (type: NBTType, value: any): NBT {
+export function tag (type: NBTType, value: any): NBT {
   return Object.defineProperties({}, {
     __value__: {
       value,
