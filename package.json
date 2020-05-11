@@ -2,8 +2,7 @@
   "name": "l2nbt",
   "version": "0.1.0",
   "description": "A lgou2w Minecraft NBT library for Javascript",
-  "main": "dist/l2nbt.js",
-  "module": "lib/index.js",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib dist",
