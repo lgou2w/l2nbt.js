@@ -1,8 +1,10 @@
 export {
+  NBT,
   NBTType,
   NBTTypes,
-  NBT,
   NBTMetadata,
+  NBTList,
+  NBTCompound,
   isNBT,
   tagByte,
   tagShort,
@@ -17,3 +19,21 @@ export {
   tagIntArray,
   tagLongArray
 } from './nbt'
+
+export {
+  NBTReader,
+  read,
+  readBase64
+} from './nbt-reader'
+
+export {
+  NBTWriter,
+  write,
+  writeBase64
+} from './nbt-writer'
+
+export {
+  writeMojangson,
+  readMojangson,
+  readMojangsonCompound
+} from './nbt-json'

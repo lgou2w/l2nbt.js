@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 
 import { expect } from 'chai'
+import { PROPERTY_TYPE, PROPERTY_VALUE } from './constants'
 import {
   NBTTypes,
   tagByte,
@@ -16,9 +17,6 @@ import {
   tagIntArray,
   tagLongArray
 } from '../src'
-
-const PROPERTY_TYPE = '__type__'
-const PROPERTY_VALUE = '__value__'
 
 describe('l2nbt.js - nbt.ts unit test', () => {
   describe('0x1 - tagByte', () => {
