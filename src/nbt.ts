@@ -190,6 +190,8 @@ function resolve (nbt: NBT): NBT {
     for (const key in nbt.__value__) {
       const val = nbt.__value__[key] as NBT
       Object.defineProperty(nbt, key, {
+        configurable: true,
+        enumerable: false,
         get (): any {
           return val.__type__ === NBTTypes.TAG_COMPOUND
             ? val

@@ -97,6 +97,21 @@ describe('l2nbt.js - nbt.ts unit test', () => {
         .to.have.property(PROPERTY_VALUE)
         .that.is.empty
     })
+    it('nested compound', () => {
+      const tag = tagCompound({
+        foo: tagByte(1),
+        bar: tagLong(2),
+        display: tagCompound({
+          name: tagString('HelloWorld')
+        })
+      })
+      expect(tag).to.have.property('foo').that.is.eq(1)
+      expect(tag).to.have.property('bar').that.is.eq(BigInt(2))
+      expect(tag)
+        .to.have.property('display')
+        .that.have.property('name')
+        .that.is.eq('HelloWorld')
+    })
   })
   describe('0xB - tagIntArray', () => {
     it('basic', () => {
