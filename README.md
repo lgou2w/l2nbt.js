@@ -23,7 +23,7 @@ yarn add l2nbt
 
 There is no default export. The correct way to import `l2nbt.js` is:
 
-```
+```javascript
 import * as l2nbt from 'l2nbt'
 ```
 

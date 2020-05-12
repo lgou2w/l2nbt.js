@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 
 import { expect } from 'chai'
-import { PROPERTY_TYPE, PROPERTY_VALUE } from './constants'
+import { P_TYPE, P_VALUE } from './constants'
 import { NBTTypes, read, readBase64 } from '../src'
 
 /**
@@ -30,24 +30,24 @@ import { NBTTypes, read, readBase64 } from '../src'
 const BINARY = new Int8Array([10, 0, 0, 1, 0, 3, 102, 111, 111, 1, 0])
 const BASE64 = 'CgAAAQADZm9vAQA='
 
-describe('l2nbt.js - nbt-reader.ts unit test', () => {
-  describe('0x1 - read', () => {
+describe('l2nbt.js - reader', () => {
+  describe('read', () => {
     it('basic', () => {
       const tag = read(BINARY)
-      expect(tag).to.have.property(PROPERTY_TYPE, NBTTypes.TAG_COMPOUND)
-      expect(tag[PROPERTY_VALUE])
+      expect(tag).to.have.property(P_TYPE, NBTTypes.TAG_COMPOUND)
+      expect(tag[P_VALUE])
         .to.have.property('foo')
-        .that.have.property(PROPERTY_VALUE)
+        .that.have.property(P_VALUE)
         .with.eq(1)
     })
   })
-  describe('0x2 - readBase64', () => {
+  describe('readBase64', () => {
     it('basic', () => {
       const tag = readBase64(BASE64)
-      expect(tag).to.have.property(PROPERTY_TYPE, NBTTypes.TAG_COMPOUND)
-      expect(tag[PROPERTY_VALUE])
+      expect(tag).to.have.property(P_TYPE, NBTTypes.TAG_COMPOUND)
+      expect(tag[P_VALUE])
         .to.have.property('foo')
-        .that.have.property(PROPERTY_VALUE)
+        .that.have.property(P_VALUE)
         .with.eq(1)
     })
   })

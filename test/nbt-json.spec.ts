@@ -8,8 +8,8 @@ import {
   writeMojangson
 } from '../src'
 
-describe('l2nbt.js - nbt-json.ts unit test', () => {
-  describe('0x1 - writeMojangson', () => {
+describe('l2nbt.js - mojangson', () => {
+  describe('write', () => {
     it('basic', () => {
       const tag = tagCompound({
         foo: tagByte(1),

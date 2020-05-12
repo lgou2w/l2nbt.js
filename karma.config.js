@@ -6,9 +6,25 @@ module.exports = (config) => {
   config.set({
     basePath: '',
     frameworks: ['mocha'],
-    files: ['test/**/*.spec.ts'],
+    files: [
+      'src/**/*.ts',
+      'test/**/*.spec.ts'
+    ],
+    exclude: [
+      'src/base64.ts'
+    ],
+    reporters: ['progress', 'coverage'],
     preprocessors: {
-      '**/*.ts': ['webpack']
+      'src/**/*.ts': ['webpack', 'coverage'],
+      'test/**/*.spec.ts': ['webpack']
+    },
+    coverageReporter: {
+      dir: 'coverage/',
+      reporters: [
+        { type: 'html' },
+        { type: 'json', subdir: '.', file: 'coverage.json' },
+        { type: 'cobertura', subdir: '.', file: 'cobertura.xml' }
+      ]
     },
     webpack: webpackConfig,
     webpackMiddleware: {
@@ -20,9 +36,9 @@ module.exports = (config) => {
     plugins: [
       require('karma-chrome-launcher'),
       require('karma-mocha'),
-      require('karma-webpack')
+      require('karma-webpack'),
+      require('karma-coverage')
     ],
-    reporters: ['progress'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

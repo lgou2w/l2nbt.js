@@ -29,11 +29,13 @@ export type NBT = {
 }
 
 export type NBTList = NBT & {
+  __value__: any[]
   readonly __elementType__?: NBTType
 }
 
 export type NBTCompound = NBT & {
-  [key: string]: NBT
+  __value__: { [key: string]: NBT }
+  [key: string]: any
 }
 
 export type NBTMetadata = {
@@ -75,39 +77,71 @@ export function tag (type: NBTType, value: any): NBT {
   }) as NBT
 }
 
+/// Tag Validation
+
+function checkNumber (value?: any): number | never {
+  if (typeof value === 'number' || typeof value === 'undefined') {
+    return value || 0
+  } throw new Error(`Invalid tag value: ${value}. (Expected: number)`)
+}
+
 export function tagByte (value?: number): NBT {
-  return tag(NBTTypes.TAG_BYTE, value || 0)
+  value = checkNumber(value)
+  return tag(NBTTypes.TAG_BYTE, value)
 }
 
 export function tagShort (value?: number): NBT {
-  return tag(NBTTypes.TAG_SHORT, value || 0)
+  value = checkNumber(value)
+  return tag(NBTTypes.TAG_SHORT, value)
 }
 
 export function tagInt (value?: number): NBT {
-  return tag(NBTTypes.TAG_INT, value || 0)
+  value = checkNumber(value)
+  return tag(NBTTypes.TAG_INT, value)
 }
 
 export function tagLong (value?: number | string | bigint): NBT {
-  if (typeof value !== 'bigint') {
-    value = BigInt(value || 0)
+  if (typeof value === 'undefined') {
+    value = BigInt(0)
+  }
+  if (typeof value === 'number' || typeof value === 'string') {
+    value = BigInt(value)
+  } else if (typeof value !== 'bigint') {
+    throw new Error(`Invalid tag long value: ${value}. (Expected: number | string | bigint)`)
   }
   return tag(NBTTypes.TAG_LONG, value)
 }
 
 export function tagFloat (value?: number): NBT {
-  return tag(NBTTypes.TAG_FLOAT, value || 0)
+  value = checkNumber(value)
+  return tag(NBTTypes.TAG_FLOAT, value)
 }
 
 export function tagDouble (value?: number): NBT {
-  return tag(NBTTypes.TAG_DOUBLE, value || 0)
+  value = checkNumber(value)
+  return tag(NBTTypes.TAG_DOUBLE, value)
 }
 
 export function tagByteArray (value?: number[]): NBT {
-  return tag(NBTTypes.TAG_BYTE_ARRAY, value || [])
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  for (const el of value) {
+    if (typeof el !== 'number') {
+      throw new Error(`Invalid tagByteArray value: ${el}. (Expected: number Array)`)
+    }
+  }
+  return tag(NBTTypes.TAG_BYTE_ARRAY, value)
 }
 
 export function tagString (value?: string): NBT {
-  return tag(NBTTypes.TAG_STRING, value || '')
+  if (typeof value === 'undefined') {
+    value = ''
+  }
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid tagString value: ${value}. (Expected: string)`)
+  }
+  return tag(NBTTypes.TAG_STRING, value)
 }
 
 export function tagList (value?: NBT[]): NBTList {
@@ -164,14 +198,27 @@ export function tagCompound (
 }
 
 export function tagIntArray (value?: number[]): NBT {
-  return tag(NBTTypes.TAG_INT_ARRAY, value || [])
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  for (const el of value) {
+    if (typeof el !== 'number') {
+      throw new Error(`Invalid tagIntArray value: ${el}. (Expected: number Array)`)
+    }
+  }
+  return tag(NBTTypes.TAG_INT_ARRAY, value)
 }
 
 export function tagLongArray (value?: (number | string | bigint)[]): NBT {
+  if (typeof value === 'undefined') {
+    value = []
+  }
   const result: bigint[] = []
-  for (let el of value || []) {
-    if (typeof el !== 'bigint') {
-      el = BigInt(el || 0)
+  for (let el of value) {
+    if (typeof el === 'number' || typeof el === 'string') {
+      el = BigInt(value)
+    } else if (typeof el !== 'bigint') {
+      throw new Error(`Invalid tagLongArray value: ${el}. (Expected: (number | string | bigint) of Array)`)
     }
     result.push(el)
   }

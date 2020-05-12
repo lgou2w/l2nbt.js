@@ -5,12 +5,12 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib dist",
+    "clean": "rimraf lib dist coverage",
     "build": "npm run build:prod",
     "build:dev": "npm run clean && tsc && cross-env NODE_ENV=development webpack",
     "build:prod": "npm run clean && tsc && cross-env NODE_ENV=production webpack",
     "test": "npm run test:browser && npm run test:node",
-    "test:browser": "cross-env NODE_ENV=development karma start karma.config.js",
+    "test:browser": "rimraf coverage && cross-env NODE_ENV=development karma start karma.config.js",
     "test:node": "cross-env NODE_ENV=development ts-mocha -p tsconfig.json test/**/*.spec.ts --exit",
     "lint": "eslint --ext .js,.ts,.tsx --ignore-path .gitignore .",
     "prepublishOnly": "npm test && npm run build"
@@ -56,6 +56,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "karma": "^5.0.5",
     "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.2",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "mocha": "^7.1.2",

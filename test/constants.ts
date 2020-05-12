@@ -1,2 +1,4 @@
-export const PROPERTY_TYPE = '__type__'
-export const PROPERTY_VALUE = '__value__'
+/// Unit test constants
+
+export const P_TYPE = '__type__'
+export const P_VALUE = '__value__'
