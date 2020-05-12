@@ -11,14 +11,20 @@ A lgou2w Minecraft NBT library for Javascript
 
 ## Install
 
-```shell
+```
 npm install l2nbt --save
 ```
 
 or
 
-```shell
+```
 yarn add l2nbt
+```
+
+There is no default export. The correct way to import `l2nbt.js` is:
+
+```
+import * as l2nbt from 'l2nbt'
 ```
 
 ## API

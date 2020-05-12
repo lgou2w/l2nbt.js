@@ -12,7 +12,7 @@
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "moduleResolution": "node"
   },
   "exclude": [
     "node_modules"
