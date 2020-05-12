@@ -3,6 +3,7 @@
 <p>
 <a href="https://github.com/lgou2w/l2nbt.js/actions"><img src="https://img.shields.io/github/workflow/status/lgou2w/l2nbt.js/Node CI/develop?logo=github&style=flat-square" /></a>
 <a href="https://travis-ci.org/lgou2w/l2nbt.js"><img src="https://img.shields.io/travis/lgou2w/l2nbt.js?style=flat-square&logo=travis" /></a>
+<a href="https://codecov.io/gh/lgou2w/l2nbt.js/branch/develop"><img src="https://img.shields.io/codecov/c/github/lgou2w/l2nbt.js/develop?label=codecov&logo=codecov&style=flat-square" /></a>
 <a href="https://www.npmjs.com/package/l2nbt"><img src="https://img.shields.io/npm/v/l2nbt?logo=npm&style=flat-square" /></a>
 <a href="https://github.com/lgou2w/l2nbt.js/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/l2nbt?logo=apache&style=flat-square" /></a>
 </p>
