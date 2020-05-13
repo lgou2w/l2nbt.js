@@ -1,34 +1,25 @@
-const webpackConfig = require('./webpack.config')
-
 process.env.CHROME_BIN = process.env.CHROME_BIN || require('puppeteer').executablePath()
 
 module.exports = (config) => {
   config.set({
     basePath: '',
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'karma-typescript'],
     files: [
       'src/**/*.ts',
-      'test/**/*.spec.ts'
+      'test/**/*.ts'
     ],
-    exclude: [
-      'src/base64.ts'
-    ],
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress', 'karma-typescript', 'coverage'],
     preprocessors: {
-      'src/**/*.ts': ['webpack', 'coverage'],
-      'test/**/*.spec.ts': ['webpack']
+      'src/**/*.ts': ['karma-typescript', 'coverage'],
+      'test/**/*.ts': ['karma-typescript']
     },
     coverageReporter: {
       dir: 'coverage/',
       reporters: [
-        { type: 'html' },
         { type: 'json', subdir: '.', file: 'coverage.json' },
-        { type: 'cobertura', subdir: '.', file: 'cobertura.xml' }
+        { type: 'cobertura', subdir: '.', file: 'cobertura.xml' },
+        { type: 'html' }
       ]
-    },
-    webpack: webpackConfig,
-    webpackMiddleware: {
-      stats: 'errors-only'
     },
     mime: {
       'text/x-typescript': ['ts']
@@ -36,7 +27,7 @@ module.exports = (config) => {
     plugins: [
       require('karma-chrome-launcher'),
       require('karma-mocha'),
-      require('karma-webpack'),
+      require('karma-typescript'),
       require('karma-coverage')
     ],
     port: 9876,

@@ -16,4 +16,16 @@ describe('l2nbt.js - tagString', () => {
       .to.have.property(P_VALUE)
       .to.be.eq('1')
   })
+  it('empty value or undefined, the value is empty string', () => {
+    expect(tagString())
+      .to.have.property(P_VALUE)
+      .that.is.empty
+    expect(tagString(undefined))
+      .to.have.property(P_VALUE)
+      .that.is.empty
+  })
+  it('illegal value then throw error', () => {
+    expect(() => tagString(null)).to.throw(Error)
+    expect(() => tagString(1)).to.throw(Error)
+  })
 })

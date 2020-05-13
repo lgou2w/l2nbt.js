@@ -3,16 +3,15 @@
 
 import { expect } from 'chai'
 import { P_TYPE, P_VALUE } from './constants'
-import {
-  NBTTypes,
-  tagByte
-} from '../src'
+import { NBTTypes, tagByte } from '../src'
 
 describe('l2nbt.js - tagByte', () => {
   it('basic', () => {
     const tag = tagByte(1)
     expect(tag).to.have.property(P_TYPE, NBTTypes.TAG_BYTE)
-    expect(tag).to.have.property(P_VALUE).to.be.eq(1)
+    expect(tag)
+      .to.have.property(P_VALUE)
+      .that.is.eq(1)
   })
   it('empty value or undefined, the value is 0', () => {
     expect(tagByte())

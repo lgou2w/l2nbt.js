@@ -36,7 +36,7 @@ export function encode (input: string) {
   ) {
     charCode = str.charCodeAt (idx += 3 / 4);
     if (charCode > 0xFF) {
-      throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      throw new Error('Encode failed: The string to be encoded contains characters outside of the Latin1 range.');
     }
     // @ts-ignore
     block = block << 8 | charCode;
@@ -49,7 +49,7 @@ export function encode (input: string) {
 export function decode (input: string) {
   var str = (String (input)).replace (/[=]+$/, ''); // #31: ExtendScript bad parse of /=
   if (str.length % 4 === 1) {
-    throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
+    throw new Error('Decode failed: The string to be decoded is not correctly encoded.');
   }
   for (
     // initialize result and counters

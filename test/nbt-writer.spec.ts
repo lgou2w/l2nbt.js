@@ -5,7 +5,18 @@ import {
   NBTTypes,
   write,
   writeBase64,
-  tagCompound, tagByte
+  tagCompound,
+  tagByte,
+  tagShort,
+  tagInt,
+  tagLong,
+  tagFloat,
+  tagDouble,
+  tagByteArray,
+  tagString,
+  tagList,
+  tagIntArray,
+  tagLongArray
 } from '../src'
 
 /**
@@ -51,6 +62,28 @@ describe('l2nbt.js - writer', () => {
       const base64 = writeBase64(tag)
       expect(base64).to.be.a('string')
       expect(base64).to.be.eq(BASE64)
+    })
+  })
+  describe('all tag types', () => {
+    // @ts-ignore TODO
+    // eslint-disable-next-line no-unused-vars
+    const tag = tagCompound({ // 3 bytes: [10, 0, 0]
+      b: tagByte(), // 5 bytes: [1, 0, 1, 98, 0]
+      s: tagShort(), // 6 bytes: [2, 0, 1, 115, 0, 0]
+      i: tagInt(), // 8 bytes: [3, 0, 1, 105, 0, 0, 0, 0]
+      l: tagLong(), // 12 bytes: [4, 0, 1, 108, 0, 0, 0, 0, 0, 0, 0, 0]
+      f: tagFloat(), // 8 bytes: [5, 0, 1, 102, 0, 0, 0, 0]
+      d: tagDouble(), // 12 bytes: [6, 0, 1, 100, 0, 0, 0, 0, 0, 0, 0, 0]
+      '[b': tagByteArray(), //  9 bytes: [7, 0, 2, 91, 98, 0, 0, 0, 0]
+      '"': tagString(), // 6 bytes: [8, 0, 1, 34, 0, 0]
+      '[': tagList(), // 9 bytes: [9, 0, 1, 91, 0, 0, 0, 0, 0]
+      '{': tagCompound(), // 5 bytes: [10, 0, 1, 123, 0]
+      '[i': tagIntArray(), // 9 bytes: [11, 0, 2, 91, 105, 0, 0, 0, 0]
+      '[l': tagLongArray() // 9 bytes: [12, 0, 2, 91, 108, 0, 0, 0, 0]
+    }) // 1 bytes: [0]
+    it('write binary', () => {
+      // const data = write(tag)
+      // expect(data.subarray(3, 8)).to.be.eq(new Int8Array([1, 0, 1, 98, 0]))
     })
   })
 })
