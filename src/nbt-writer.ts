@@ -102,7 +102,7 @@ export class NBTWriter {
       const c = value.charCodeAt(i)
       if ((c >= 0x0001) && (c <= 0x007F)) {
         utflen++
-      } else if (c > 0x007F) {
+      } else if (c > 0x07FF) {
         utflen += 3
       } else {
         utflen += 2
@@ -169,7 +169,7 @@ function writeValue (writer: NBTWriter, nbt: NBT): NBTWriter {
     case NBTTypes.TAG_LIST:
       return writeList(writer, nbt)
     case NBTTypes.TAG_COMPOUND:
-      return writeCompound(writer, nbt as NBTCompound)
+      return writeCompound(writer, nbt)
     default:
       throw new Error(`Unsupported nbt type id: ${type}`)
   }
@@ -213,8 +213,9 @@ function writeList (writer: NBTWriter, nbt: NBTList): NBTWriter {
 }
 
 function writeCompound (writer: NBTWriter, nbt: NBTCompound): NBTWriter {
-  for (const key in nbt) {
-    const val = nbt[key]
+  const values: {[key: string]: NBT} = nbt.__value__
+  for (const key in values) {
+    const val = values[key]
     writeMetadata(writer, <NBTMetadata> { type: val.__type__, name: key })
     writeValue(writer, val)
   }
