@@ -6,6 +6,7 @@ export {
   NBTList,
   NBTCompound,
   isNBT,
+  tag,
   tagByte,
   tagShort,
   tagInt,
@@ -17,7 +18,8 @@ export {
   tagList,
   tagCompound,
   tagIntArray,
-  tagLongArray
+  tagLongArray,
+  resolve
 } from './nbt'
 
 export {

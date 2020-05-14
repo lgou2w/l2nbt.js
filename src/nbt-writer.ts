@@ -175,14 +175,14 @@ function writeValue (writer: NBTWriter, nbt: NBT): NBTWriter {
   }
 }
 
-function writeArray (writer: NBTWriter, value: NBT[], type: NBTType): NBTWriter {
+function writeArray (writer: NBTWriter, value: (number | bigint)[], type: NBTType): NBTWriter {
   writer.writeInt(value.length)
   for (let i = 0; i < value.length; i++) {
-    const val = value[i].__value__
+    const val = value[i]
     type === NBTTypes.TAG_BYTE_ARRAY
-      ? writer.writeByte(val)
+      ? writer.writeByte(val as number)
       : type === NBTTypes.TAG_INT_ARRAY
-        ? writer.writeInt(val)
+        ? writer.writeInt(val as number)
         : writer.writeLong(val)
   }
   return writer

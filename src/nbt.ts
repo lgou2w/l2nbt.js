@@ -243,7 +243,7 @@ export function tagLongArray (value?: (number | string | bigint)[]): NBT<bigint[
   return tag(NBTTypes.TAG_LONG_ARRAY, result)
 }
 
-function resolve (nbt: NBT): NBT {
+export function resolve (nbt: NBT): NBT {
   if (nbt.__type__ === NBTTypes.TAG_LIST) {
     for (const el of nbt.__value__) {
       if (el.__type__ === NBTTypes.TAG_LIST ||

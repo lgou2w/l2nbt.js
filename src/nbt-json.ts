@@ -18,7 +18,8 @@ import {
   tagList,
   tagCompound,
   tagIntArray,
-  tagLongArray
+  tagLongArray,
+  resolve
 } from './nbt'
 
 /// Write Mojangson
@@ -455,11 +456,13 @@ class MojangsonParser {
 export function readMojangson (mojangsonWithoutColor: string): NBT {
   const reader = new StringReader(mojangsonWithoutColor)
   const parser = new MojangsonParser(reader)
-  return parser.readValue()
+  const tag = parser.readValue()
+  return resolve(tag)
 }
 
 export function readMojangsonCompound (mojangsonWithoutColor: string): NBTCompound {
   const reader = new StringReader(mojangsonWithoutColor)
   const parser = new MojangsonParser(reader)
-  return parser.readSingleStruct() as NBTCompound
+  const compound = parser.readSingleStruct() as NBTCompound
+  return resolve(compound)
 }
