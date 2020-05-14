@@ -22,18 +22,19 @@ export const NBTTypes = {
 
 /// NBT
 
-export type NBT = {
-  __value__: any
+export type NBT<T = any> = {
+  __value__: T
   readonly __type__: NBTType
   readonly __nbt__: true
 }
 
-export type NBTList = NBT & {
+export type NBTList = NBT<any[]> & {
+  // only defined if the element type is not TAG_COMPOUND
   readonly __elementType__?: NBTType
 }
 
-export type NBTCompound = NBT & {
-  [key: string]: NBT
+export type NBTCompound = NBT<{ [key: string]: NBT }> & {
+  [key: string]: any
 }
 
 export type NBTMetadata = {
@@ -75,43 +76,83 @@ export function tag (type: NBTType, value: any): NBT {
   }) as NBT
 }
 
-export function tagByte (value?: number): NBT {
-  return tag(NBTTypes.TAG_BYTE, value || 0)
+/// Tag Validation
+
+function checkNumber (value?: any): number | never {
+  if (typeof value === 'number' || typeof value === 'undefined') {
+    return value || 0
+  } throw new Error(`Invalid tagNumber value: ${value}. (Expected: number)`)
 }
 
-export function tagShort (value?: number): NBT {
-  return tag(NBTTypes.TAG_SHORT, value || 0)
+function tagNumber (type: NBTType, value?: any): NBT<number> | never {
+  value = checkNumber(value)
+  return tag(type, value)
 }
 
-export function tagInt (value?: number): NBT {
-  return tag(NBTTypes.TAG_INT, value || 0)
+export function tagByte (value?: number) {
+  return tagNumber(NBTTypes.TAG_BYTE, value)
 }
 
-export function tagLong (value?: number | string | bigint): NBT {
-  if (typeof value !== 'bigint') {
-    value = BigInt(value || 0)
+export function tagShort (value?: number) {
+  return tagNumber(NBTTypes.TAG_SHORT, value)
+}
+
+export function tagInt (value?: number) {
+  return tagNumber(NBTTypes.TAG_INT, value)
+}
+
+export function tagLong (value?: number | string | bigint): NBT<bigint> {
+  if (typeof value === 'undefined') {
+    value = BigInt(0)
+  }
+  if (typeof value === 'number' || typeof value === 'string') {
+    value = BigInt(value)
+  } else if (typeof value !== 'bigint') {
+    throw new Error(`Invalid tag long value: ${value}. (Expected: number | string | bigint)`)
   }
   return tag(NBTTypes.TAG_LONG, value)
 }
 
-export function tagFloat (value?: number): NBT {
-  return tag(NBTTypes.TAG_FLOAT, value || 0)
+export function tagFloat (value?: number) {
+  return tagNumber(NBTTypes.TAG_FLOAT, value)
 }
 
-export function tagDouble (value?: number): NBT {
-  return tag(NBTTypes.TAG_DOUBLE, value || 0)
+export function tagDouble (value?: number) {
+  return tagNumber(NBTTypes.TAG_DOUBLE, value)
 }
 
-export function tagByteArray (value?: number[]): NBT {
-  return tag(NBTTypes.TAG_BYTE_ARRAY, value || [])
+export function tagByteArray (value?: number[]): NBT<number[]> {
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  if (!(value instanceof Array)) {
+    throw new Error(`Invalid tagByteArray value: ${value} (Expected: number Array)`)
+  }
+  for (const el of value) {
+    if (typeof el !== 'number') {
+      throw new Error(`Invalid tagByteArray value: ${el}. (Expected: number Array)`)
+    }
+  }
+  return tag(NBTTypes.TAG_BYTE_ARRAY, value)
 }
 
-export function tagString (value?: string): NBT {
-  return tag(NBTTypes.TAG_STRING, value || '')
+export function tagString (value?: string): NBT<string> {
+  if (typeof value === 'undefined') {
+    value = ''
+  }
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid tagString value: ${value}. (Expected: string)`)
+  }
+  return tag(NBTTypes.TAG_STRING, value)
 }
 
 export function tagList (value?: NBT[]): NBTList {
-  value = value || []
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  if (!(value instanceof Array)) {
+    throw new Error(`Invalid tagList value type: '${value}' (Expected: NBT Array)`)
+  }
   let elementType: NBTType = NBTTypes.TAG_END
   for (const el of value) {
     if (!isNBT(el)) {
@@ -148,7 +189,12 @@ export function tagCompound (
   value?: { [key: string]: NBT },
   deleteNotNBT?: boolean
 ): NBTCompound {
-  value = value || {}
+  if (typeof value === 'undefined') {
+    value = {}
+  }
+  if (value === null || typeof value !== 'object') {
+    throw new Error(`Invalid tagCompound value type: '${value}' (Expected: { [key: string}: NBT })`)
+  }
   for (const key in value) {
     const val = value[key]
     if (!isNBT(val)) {
@@ -163,22 +209,41 @@ export function tagCompound (
   return resolve(nbt) as NBTCompound
 }
 
-export function tagIntArray (value?: number[]): NBT {
-  return tag(NBTTypes.TAG_INT_ARRAY, value || [])
+export function tagIntArray (value?: number[]): NBT<number[]> {
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  if (!(value instanceof Array)) {
+    throw new Error(`Invalid tagIntArray value: ${value} (Expected: number Array)`)
+  }
+  for (const el of value) {
+    if (typeof el !== 'number') {
+      throw new Error(`Invalid tagIntArray value: ${el}. (Expected: number Array)`)
+    }
+  }
+  return tag(NBTTypes.TAG_INT_ARRAY, value)
 }
 
-export function tagLongArray (value?: (number | string | bigint)[]): NBT {
+export function tagLongArray (value?: (number | string | bigint)[]): NBT<bigint[]> {
+  if (typeof value === 'undefined') {
+    value = []
+  }
+  if (!(value instanceof Array)) {
+    throw new Error(`Invalid tagLongArray value: ${value} (Expected: (number | string | bigint) of Array)`)
+  }
   const result: bigint[] = []
-  for (let el of value || []) {
-    if (typeof el !== 'bigint') {
-      el = BigInt(el || 0)
+  for (let el of value) {
+    if (typeof el === 'number' || typeof el === 'string') {
+      el = BigInt(el)
+    } else if (typeof el !== 'bigint') {
+      throw new Error(`Invalid tagLongArray value: ${el}. (Expected: (number | string | bigint) of Array)`)
     }
     result.push(el)
   }
   return tag(NBTTypes.TAG_LONG_ARRAY, result)
 }
 
-function resolve (nbt: NBT): NBT {
+export function resolve (nbt: NBT): NBT {
   if (nbt.__type__ === NBTTypes.TAG_LIST) {
     for (const el of nbt.__value__) {
       if (el.__type__ === NBTTypes.TAG_LIST ||
@@ -187,71 +252,50 @@ function resolve (nbt: NBT): NBT {
       }
     }
   } else if (nbt.__type__ === NBTTypes.TAG_COMPOUND) {
-    for (const key in nbt.__value__) {
-      const val = nbt.__value__[key] as NBT
+    const values: { [key: string]: NBT } = nbt.__value__
+    for (const key in values) {
+      const val = values[key] as NBT
       Object.defineProperty(nbt, key, {
+        configurable: true,
+        enumerable: false,
         get (): any {
           return val.__type__ === NBTTypes.TAG_COMPOUND
             ? val
             : val.__value__
         },
         set (newVal: any) {
-          const typeOf = typeof newVal
-          switch (val.__type__) {
+          const type = val.__type__
+          switch (type) {
             case NBTTypes.TAG_BYTE:
             case NBTTypes.TAG_SHORT:
             case NBTTypes.TAG_INT:
             case NBTTypes.TAG_FLOAT:
             case NBTTypes.TAG_DOUBLE:
-              if (typeOf !== 'number') {
-                throw new Error(`Invalid key '${key}' value type: ${typeOf}. (Expected: number)`)
-              }
-              val.__value__ = newVal
+              val.__value__ = tagNumber(type, newVal).__value__
               break
             case NBTTypes.TAG_LONG:
-              if (typeOf === 'number' || typeOf === 'string') {
-                newVal = BigInt(newVal)
-              } else if (typeOf !== 'bigint') {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: number | string | bigint)`)
-              }
-              val.__value__ = newVal
+              val.__value__ = tagLong(newVal).__value__
               break
             case NBTTypes.TAG_BYTE_ARRAY:
-            case NBTTypes.TAG_INT_ARRAY:
-              if (!(newVal instanceof Array)) {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: number Array)`)
-              }
-              for (const el of newVal) {
-                if (typeof el !== 'number') {
-                  throw new Error(`Invalid value element type: '${typeof el}' (Expected: number)`)
-                }
-              }
-              val.__value__ = newVal
+              val.__value__ = tagByteArray(newVal).__value__
               break
             case NBTTypes.TAG_STRING:
-              if (typeOf !== 'string') {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: string)`)
-              }
-              val.__value__ = newVal
+              val.__value__ = tagString(newVal).__value__
               break
             case NBTTypes.TAG_LIST:
-              if (!(newVal instanceof Array)) {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: NBT Array)`)
-              }
               val.__value__ = tagList(newVal).__value__
               break
             case NBTTypes.TAG_COMPOUND:
-              if (typeOf !== 'object') {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: NBT)`)
-              }
               val.__value__ = tagCompound(newVal).__value__
               break
+            case NBTTypes.TAG_INT_ARRAY:
+              val.__value__ = tagIntArray(newVal).__value__
+              break
             case NBTTypes.TAG_LONG_ARRAY:
-              if (!(newVal instanceof Array)) {
-                throw new Error(`Invalid key '${key}' value type: '${typeOf}' (Expected: (number | string | bigint) of Array)`)
-              }
               val.__value__ = tagLongArray(newVal).__value__
               break
+            default:
+              throw new Error(`Illegal state: unsupported nbt value type: ${type} of key '${key}'.`)
           }
         }
       })
