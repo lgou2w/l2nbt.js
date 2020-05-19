@@ -59,19 +59,19 @@ export function tag (type: NBTType, value: any): NBT {
       value,
       writable: true,
       configurable: true,
-      enumerable: false
+      enumerable: true
     },
     __type__: {
       value: type,
       writable: false,
       configurable: false,
-      enumerable: false
+      enumerable: true
     },
     __nbt__: {
       value: true,
       writable: false,
       configurable: false,
-      enumerable: false
+      enumerable: true
     }
   }) as NBT
 }
@@ -179,7 +179,7 @@ export function tagList (value?: NBT[]): NBTList {
         value: elementType,
         writable: false,
         configurable: false,
-        enumerable: false
+        enumerable: true
       }
     })
   }
@@ -257,7 +257,7 @@ export function resolve (nbt: NBT): NBT {
       const val = values[key] as NBT
       Object.defineProperty(nbt, key, {
         configurable: true,
-        enumerable: false,
+        enumerable: true,
         get (): any {
           return val.__type__ === NBTTypes.TAG_COMPOUND
             ? val
