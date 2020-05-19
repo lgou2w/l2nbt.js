@@ -26,16 +26,16 @@ export {
   NBTReader,
   read,
   readBase64
-} from './nbt-reader'
+} from './reader'
 
 export {
   NBTWriter,
   write,
   writeBase64
-} from './nbt-writer'
+} from './writer'
 
 export {
   writeMojangson,
   readMojangson,
   readMojangsonCompound
-} from './nbt-json'
+} from './json'
