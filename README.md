@@ -1,3 +1,7 @@
+https://github.com/lgou2w/l2mc.js
+
+> This module has moved and is now available at `@lgou2w/mcnbt`. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues.
+
 # l2nbt.js
 
 <p>
